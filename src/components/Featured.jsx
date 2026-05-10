@@ -1,28 +1,34 @@
 import { motion } from 'framer-motion'
+import { useBreakpoint } from '../hooks/useBreakpoint'
 
-const inView = { once: true, amount: 0.2 }
+const inView = { once: true, amount: 0.15 }
 
 export default function Featured() {
+  const { isMobile, isTablet } = useBreakpoint()
+  const singleCol = isTablet
+
   return (
-    <section id="memories" style={s.section}>
-      <div style={s.inner}>
+    <section id="memories" style={{ ...s.section, padding: isMobile ? '60px 20px' : '90px 40px' }}>
+      <div style={{
+        ...s.inner,
+        gridTemplateColumns: singleCol ? '1fr' : '1fr 1fr',
+        gap: singleCol ? 48 : 72,
+      }}>
 
         {/* Image */}
         <motion.div
           style={s.imgWrap}
-          initial={{ opacity: 0, x: -60 }}
-          whileInView={{ opacity: 1, x: 0 }}
+          initial={{ opacity: 0, x: singleCol ? 0 : -60, y: singleCol ? 30 : 0 }}
+          whileInView={{ opacity: 1, x: 0, y: 0 }}
           viewport={inView}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
         >
           <div style={s.imgInner}>
             <img src="/images/m1.jpg" alt="A cherished memory with Mom" style={s.img} />
-            {/* Green corner accent */}
             <div style={s.cornerAccent} />
           </div>
-          {/* Floating badge */}
           <motion.div
-            style={s.floatBadge}
+            style={{ ...s.floatBadge, right: isMobile ? 12 : 24, bottom: isMobile ? -14 : -20 }}
             animate={{ y: [0, -8, 0] }}
             transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
           >
@@ -33,21 +39,28 @@ export default function Featured() {
 
         {/* Text */}
         <motion.div
-          style={s.body}
-          initial={{ opacity: 0, x: 60 }}
-          whileInView={{ opacity: 1, x: 0 }}
+          style={{
+            ...s.body,
+            textAlign: singleCol ? 'center' : 'left',
+            alignItems: singleCol ? 'center' : 'flex-start',
+            paddingTop: singleCol ? 28 : 16,
+          }}
+          initial={{ opacity: 0, x: singleCol ? 0 : 60, y: singleCol ? 30 : 0 }}
+          whileInView={{ opacity: 1, x: 0, y: 0 }}
           viewport={inView}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
         >
           <p style={s.label}>Featured Memory</p>
-          <h2 style={s.title}>Our story,<br />told in moments</h2>
+          <h2 style={{ ...s.title, fontSize: isMobile ? 'clamp(26px, 7vw, 38px)' : 'clamp(28px, 3.2vw, 46px)' }}>
+            Our story,<br />told in moments
+          </h2>
           <p style={s.text}>
             Every photograph holds a universe — the warmth of your smile, the strength
             in your hands, the love in your eyes. These are snapshots of a beautiful
             story we have built together, one memory at a time.
           </p>
 
-          <div style={s.stats}>
+          <div style={{ ...s.stats, justifyContent: singleCol ? 'center' : 'flex-start' }}>
             {[
               { num: '∞', label: 'Years of Love' },
               { num: '💚', label: 'Memories Made' },
@@ -81,7 +94,6 @@ function HeartIcon() {
 const s = {
   section: {
     background: '#181818',
-    padding: '90px 40px',
     position: 'relative',
     zIndex: 1,
   },
@@ -89,38 +101,24 @@ const s = {
     maxWidth: 1120,
     margin: '0 auto',
     display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: 72,
     alignItems: 'center',
   },
-  imgWrap: {
-    position: 'relative',
-  },
+  imgWrap: { position: 'relative' },
   imgInner: {
     borderRadius: 12,
     overflow: 'hidden',
     boxShadow: '0 20px 60px rgba(0,0,0,.6)',
     position: 'relative',
   },
-  img: {
-    width: '100%',
-    aspectRatio: '1',
-    objectFit: 'cover',
-    display: 'block',
-  },
+  img: { width: '100%', aspectRatio: '1', objectFit: 'cover', display: 'block' },
   cornerAccent: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    width: 80,
-    height: 80,
+    position: 'absolute', bottom: 0, left: 0,
+    width: 80, height: 80,
     background: 'linear-gradient(135deg, rgba(30,215,96,.35) 0%, transparent 60%)',
     pointerEvents: 'none',
   },
   floatBadge: {
     position: 'absolute',
-    bottom: -20,
-    right: 24,
     background: '#1ed760',
     color: '#000',
     borderRadius: 9999,
@@ -130,59 +128,35 @@ const s = {
     gap: 7,
     boxShadow: '0 8px 24px rgba(30,215,96,.4)',
   },
-  floatText: {
-    fontSize: 13,
-    fontWeight: 700,
-    letterSpacing: '0.5px',
-  },
+  floatText: { fontSize: 13, fontWeight: 700, letterSpacing: '0.5px' },
   body: {
-    paddingTop: 16,
+    display: 'flex',
+    flexDirection: 'column',
   },
   label: {
-    fontSize: 11,
-    fontWeight: 700,
-    letterSpacing: '2px',
-    textTransform: 'uppercase',
-    color: '#1ed760',
-    marginBottom: 18,
+    fontSize: 11, fontWeight: 700,
+    letterSpacing: '2px', textTransform: 'uppercase',
+    color: '#1ed760', marginBottom: 18,
   },
   title: {
     fontFamily: "'Playfair Display', Georgia, serif",
-    fontSize: 'clamp(28px, 3.2vw, 46px)',
-    fontWeight: 700,
-    lineHeight: 1.15,
-    color: '#fff',
-    marginBottom: 20,
+    fontWeight: 700, lineHeight: 1.15,
+    color: '#fff', marginBottom: 20,
   },
-  text: {
-    fontSize: 15,
-    color: '#b3b3b3',
-    lineHeight: 1.85,
-    marginBottom: 36,
-  },
+  text: { fontSize: 15, color: '#b3b3b3', lineHeight: 1.85, marginBottom: 36 },
   stats: {
     display: 'flex',
     gap: 32,
+    flexWrap: 'wrap',
     marginBottom: 36,
     borderTop: '1px solid #2a2a2a',
     borderBottom: '1px solid #2a2a2a',
     padding: '20px 0',
+    width: '100%',
   },
-  stat: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 4,
-  },
-  statNum: {
-    fontSize: 22,
-    fontWeight: 700,
-    color: '#fff',
-  },
-  statLabel: {
-    fontSize: 11,
-    color: '#b3b3b3',
-    letterSpacing: '0.5px',
-  },
+  stat: { display: 'flex', flexDirection: 'column', gap: 4 },
+  statNum: { fontSize: 22, fontWeight: 700, color: '#fff' },
+  statLabel: { fontSize: 11, color: '#b3b3b3', letterSpacing: '0.5px' },
   btn: {
     display: 'inline-flex',
     alignItems: 'center',
@@ -191,13 +165,10 @@ const s = {
     color: '#fff',
     border: '1px solid #7c7c7c',
     fontFamily: "'Inter', sans-serif",
-    fontSize: 13,
-    fontWeight: 700,
-    letterSpacing: '1.4px',
-    textTransform: 'uppercase',
+    fontSize: 13, fontWeight: 700,
+    letterSpacing: '1.4px', textTransform: 'uppercase',
     padding: '12px 26px',
     borderRadius: 9999,
     cursor: 'pointer',
-    transition: 'border-color .15s, color .15s',
   },
 }

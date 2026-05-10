@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useBreakpoint } from '../hooks/useBreakpoint'
 
 const photos = [
   {
@@ -21,10 +22,12 @@ const photos = [
 
 export default function Album() {
   const [selected, setSelected] = useState(null)
+  const { isMobile, isTablet } = useBreakpoint()
+
+  const cols = isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)'
 
   return (
-    <section style={s.section}>
-      {/* Header */}
+    <section style={{ ...s.section, padding: isMobile ? '60px 20px' : '90px 40px' }}>
       <motion.div
         style={s.header}
         initial={{ opacity: 0, y: 28 }}
@@ -37,23 +40,14 @@ export default function Album() {
         <p style={s.sub}>A collection of our most treasured moments</p>
       </motion.div>
 
-      {/* Grid */}
-      <div style={s.grid}>
+      <div style={{ ...s.grid, gridTemplateColumns: cols, gap: isMobile ? 16 : 24 }}>
         {photos.map((p, i) => (
-          <Card
-            key={p.name}
-            photo={p}
-            delay={i * 0.12}
-            onClick={() => setSelected(p)}
-          />
+          <Card key={p.name} photo={p} delay={i * 0.12} onClick={() => setSelected(p)} />
         ))}
       </div>
 
-      {/* Lightbox */}
       <AnimatePresence>
-        {selected && (
-          <Lightbox photo={selected} onClose={() => setSelected(null)} />
-        )}
+        {selected && <Lightbox photo={selected} onClose={() => setSelected(null)} />}
       </AnimatePresence>
     </section>
   )
@@ -83,30 +77,21 @@ function Card({ photo, delay, onClick }) {
           transition={{ duration: 0.4, ease: 'easeOut' }}
           loading="lazy"
         />
-
-        {/* Overlay on hover */}
         <motion.div
           style={s.artOverlay}
           animate={{ opacity: hovered ? 1 : 0 }}
           transition={{ duration: 0.2 }}
         />
-
-        {/* Play btn */}
         <motion.div
           style={s.playBtn}
-          animate={{
-            opacity: hovered ? 1 : 0,
-            scale:   hovered ? 1 : 0.7,
-            y:       hovered ? 0 : 8,
-          }}
-          transition={{ duration: 0.2, ease: 'easeOut' }}
+          animate={{ opacity: hovered ? 1 : 0, scale: hovered ? 1 : 0.7, y: hovered ? 0 : 8 }}
+          transition={{ duration: 0.2 }}
         >
           <svg width="22" height="22" viewBox="0 0 24 24" fill="#000">
             <path d="M8 5v14l11-7z"/>
           </svg>
         </motion.div>
       </div>
-
       <p style={s.name}>{photo.name}</p>
       <p style={s.desc}>{photo.desc}</p>
     </motion.article>
@@ -133,7 +118,7 @@ function Lightbox({ photo, onClose }) {
       >
         <img src={photo.src} alt={photo.name} style={s.lbImg} />
         <p style={s.lbName}>{photo.name}</p>
-        <button style={s.lbClose} onClick={onClose}>
+        <button style={s.lbClose} onClick={onClose} aria-label="Close">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
             <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
           </svg>
@@ -145,7 +130,6 @@ function Lightbox({ photo, onClose }) {
 
 const s = {
   section: {
-    padding: '90px 40px',
     maxWidth: 1120,
     margin: '0 auto',
     position: 'relative',
@@ -159,11 +143,7 @@ const s = {
   },
   title: { fontSize: 24, fontWeight: 700, color: '#fff', marginBottom: 6 },
   sub: { fontSize: 14, color: '#b3b3b3' },
-  grid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: 24,
-  },
+  grid: { display: 'grid' },
   card: {
     background: '#181818',
     borderRadius: 8,
@@ -178,10 +158,7 @@ const s = {
     overflow: 'hidden',
     marginBottom: 16,
   },
-  img: {
-    width: '100%', height: '100%',
-    objectFit: 'cover', display: 'block',
-  },
+  img: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' },
   artOverlay: {
     position: 'absolute', inset: 0,
     background: 'rgba(0,0,0,.3)',
@@ -201,12 +178,12 @@ const s = {
     WebkitBoxOrient: 'vertical',
     overflow: 'hidden',
   },
-  /* Lightbox */
   lb: {
     position: 'fixed', inset: 0, zIndex: 1000,
     background: 'rgba(0,0,0,.85)',
     display: 'flex', alignItems: 'center', justifyContent: 'center',
     backdropFilter: 'blur(8px)',
+    padding: '20px',
   },
   lbInner: {
     position: 'relative',
@@ -217,7 +194,7 @@ const s = {
   },
   lbImg: {
     display: 'block',
-    maxWidth: '80vw', maxHeight: '80vh',
+    maxWidth: '85vw', maxHeight: '80vh',
     objectFit: 'contain',
   },
   lbName: {

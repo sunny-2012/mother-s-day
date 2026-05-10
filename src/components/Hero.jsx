@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
+import { useBreakpoint } from '../hooks/useBreakpoint'
 
 const stagger = {
   hidden: {},
@@ -13,16 +14,16 @@ const fadeUp = {
 
 export default function Hero() {
   const bgRef = useRef(null)
+  const { isMobile } = useBreakpoint()
 
   useEffect(() => {
+    if (isMobile) return
     let ticking = false
     const onScroll = () => {
       if (!ticking) {
         requestAnimationFrame(() => {
-          if (bgRef.current) {
-            bgRef.current.style.transform =
-              `scale(1.08) translateY(${window.scrollY * 0.25}px)`
-          }
+          if (bgRef.current)
+            bgRef.current.style.transform = `scale(1.08) translateY(${window.scrollY * 0.25}px)`
           ticking = false
         })
         ticking = true
@@ -30,22 +31,16 @@ export default function Hero() {
     }
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+  }, [isMobile])
 
   return (
-    <section style={s.section}>
-      {/* BG image */}
+    <section style={{ ...s.section, minHeight: isMobile ? '100svh' : 600 }}>
       <div ref={bgRef} style={s.bg} />
-
-      {/* Gradient overlay */}
       <div style={s.overlay} />
-
-      {/* Radial glow */}
       <div style={s.glow} />
 
-      {/* Content */}
       <motion.div
-        style={s.content}
+        style={{ ...s.content, padding: isMobile ? '0 20px' : '0 24px' }}
         variants={stagger}
         initial="hidden"
         animate="show"
@@ -54,13 +49,15 @@ export default function Hero() {
           Mother's Day 2026
         </motion.span>
 
-        <motion.h1 variants={fadeUp} style={s.title}>
+        <motion.h1
+          variants={fadeUp}
+          style={{ ...s.title, fontSize: isMobile ? 'clamp(36px, 11vw, 56px)' : 'clamp(44px, 8.5vw, 92px)' }}
+        >
           To the woman<br />
-          who is my{' '}
-          <em style={s.accent}>whole world</em>
+          who is my <em style={s.accent}>whole world</em>
         </motion.h1>
 
-        <motion.p variants={fadeUp} style={s.subtitle}>
+        <motion.p variants={fadeUp} style={{ ...s.subtitle, fontSize: isMobile ? 15 : 17 }}>
           A celebration of endless love, quiet strength,<br />
           and everything you are.
         </motion.p>
@@ -73,7 +70,6 @@ export default function Hero() {
         </motion.div>
       </motion.div>
 
-      {/* Scroll hint */}
       <motion.div
         style={s.scrollHint}
         initial={{ opacity: 0 }}
@@ -112,7 +108,6 @@ const s = {
   section: {
     position: 'relative',
     height: '100vh',
-    minHeight: 600,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -152,7 +147,6 @@ const s = {
     position: 'relative',
     zIndex: 1,
     textAlign: 'center',
-    padding: '0 24px',
     maxWidth: 860,
   },
   badge: {
@@ -169,19 +163,14 @@ const s = {
   },
   title: {
     fontFamily: "'Playfair Display', Georgia, serif",
-    fontSize: 'clamp(44px, 8.5vw, 92px)',
     fontWeight: 700,
     lineHeight: 1.08,
     letterSpacing: '-0.02em',
     color: '#fff',
     marginBottom: 22,
   },
-  accent: {
-    fontStyle: 'italic',
-    color: '#1ed760',
-  },
+  accent: { fontStyle: 'italic', color: '#1ed760' },
   subtitle: {
-    fontSize: 17,
     fontWeight: 400,
     color: '#b3b3b3',
     maxWidth: 480,
@@ -202,7 +191,6 @@ const s = {
     borderRadius: 500,
     textDecoration: 'none',
     boxShadow: '0 8px 24px rgba(30,215,96,.3)',
-    transition: 'transform .15s ease-out, box-shadow .15s',
   },
   scrollHint: {
     position: 'absolute',

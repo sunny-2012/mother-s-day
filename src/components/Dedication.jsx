@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { useBreakpoint } from '../hooks/useBreakpoint'
 
 const fadeUp = (delay = 0) => ({
   hidden: { opacity: 0, y: 32 },
@@ -11,9 +12,10 @@ const fadeUp = (delay = 0) => ({
 const inView = { once: true, amount: 0.25 }
 
 export default function Dedication() {
+  const { isMobile } = useBreakpoint()
+
   return (
-    <section style={s.section}>
-      {/* Glow top */}
+    <section style={{ ...s.section, padding: isMobile ? '80px 20px' : '120px 24px' }}>
       <div style={s.topGlow} />
 
       <motion.p
@@ -32,14 +34,14 @@ export default function Dedication() {
       />
 
       <motion.blockquote
-        style={s.quote}
+        style={{ ...s.quote, fontSize: isMobile ? 'clamp(22px, 6vw, 34px)' : 'clamp(24px, 3.8vw, 44px)' }}
         variants={fadeUp(0.15)} initial="hidden" whileInView="show" viewport={inView}
       >
         "Behind every great child<br />is a truly amazing mom."
       </motion.blockquote>
 
       <motion.p
-        style={s.msg}
+        style={{ ...s.msg, fontSize: isMobile ? 15 : 16 }}
         variants={fadeUp(0.25)} initial="hidden" whileInView="show" viewport={inView}
       >
         To my dearest Mom — your love is the melody that plays through every memory,
@@ -61,7 +63,6 @@ export default function Dedication() {
 const s = {
   section: {
     position: 'relative',
-    padding: '120px 24px',
     maxWidth: 700,
     margin: '0 auto',
     textAlign: 'center',
@@ -78,42 +79,28 @@ const s = {
     pointerEvents: 'none',
   },
   label: {
-    fontSize: 11,
-    fontWeight: 700,
-    letterSpacing: '2px',
-    textTransform: 'uppercase',
-    color: '#1ed760',
-    marginBottom: 18,
+    fontSize: 11, fontWeight: 700,
+    letterSpacing: '2px', textTransform: 'uppercase',
+    color: '#1ed760', marginBottom: 18,
   },
   divider: {
-    width: 36,
-    height: 2,
-    background: '#1ed760',
-    borderRadius: 2,
+    width: 36, height: 2,
+    background: '#1ed760', borderRadius: 2,
     margin: '0 auto 40px',
     transformOrigin: 'left',
   },
   quote: {
     fontFamily: "'Playfair Display', Georgia, serif",
-    fontSize: 'clamp(24px, 3.8vw, 44px)',
-    fontWeight: 400,
-    fontStyle: 'italic',
-    lineHeight: 1.35,
-    color: '#fff',
-    marginBottom: 36,
-    listStyle: 'none',
+    fontWeight: 400, fontStyle: 'italic',
+    lineHeight: 1.35, color: '#fff',
+    marginBottom: 36, listStyle: 'none',
   },
   msg: {
-    fontSize: 16,
-    color: '#b3b3b3',
-    lineHeight: 1.85,
-    maxWidth: 580,
-    margin: '0 auto 32px',
+    color: '#b3b3b3', lineHeight: 1.85,
+    maxWidth: 580, margin: '0 auto 32px',
   },
   sig: {
     fontFamily: "'Playfair Display', Georgia, serif",
-    fontSize: 20,
-    fontStyle: 'italic',
-    color: '#cbcbcb',
+    fontSize: 20, fontStyle: 'italic', color: '#cbcbcb',
   },
 }
