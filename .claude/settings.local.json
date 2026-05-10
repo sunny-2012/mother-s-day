@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx getdesign@latest add spotify)",
+      "Bash(start *)",
+      "Bash(npx vercel *)",
+      "Bash(npm create *)",
+      "Bash(npx create-vite@latest . --template react --overwrite)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(git init *)",
+      "Bash(git remote *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git branch *)"
+    ]
+  }
+}
